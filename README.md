@@ -5,6 +5,8 @@ This project presents a **Parameter-Efficient Fine-Tuning (PEFT)** approach usin
 
 ---
 
+![Workflow Diagram](assets/mermid_diag.png)
+
 ## Phase 1: Dataset Preparation — *Completed*
 
 ###  Data Acquisition
