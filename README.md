@@ -1,49 +1,49 @@
-# 📊 Financial News Summarization Project: Detailed Implementation Report
+#  Financial News Summarization Project: Detailed Implementation Report
 
-## 🔍 Overview
+##  Overview
 This project presents a **Parameter-Efficient Fine-Tuning (PEFT)** approach using **Low-Rank Adaptation (LoRA)** to optimize a pre-trained **PEGASUS** model (`google/pegasus-cnn_dailymail`) for the specific task of **financial news summarization**. Designed to run on resource-constrained environments (Google Colab T4 GPU), the project combines smart filtering, efficient model adaptation, and extensive evaluation to achieve high-quality, domain-specific summarization.
 
 ---
 
-## ✅ Phase 1: Dataset Preparation — *Completed*
+## Phase 1: Dataset Preparation — *Completed*
 
-### 📦 Data Acquisition
+###  Data Acquisition
 - **Dataset**: [CNN/DailyMail dataset (v3.0.0)](https://huggingface.co/datasets/abisee/cnn_dailymail)
 - **Objective**: Extract financial articles using a domain-specific filter
 
-### 🔍 Keyword Filtering
+###  Keyword Filtering
 - **Keywords Used**: 436 finance-related terms (e.g., earnings, inflation, dividends, stock)
 - **Filtering Logic**: Articles must match at least 2 finance-related keywords
 
-### 📊 Filtered Dataset Summary
+### Filtered Dataset Summary
 | Split       | Original Size | Filtered Size | Final Sampled Size |
 |-------------|----------------|----------------|----------------------|
 | Training    | 287,113        | ~40,000        | 4,000                |
 | Validation  | 13,368         | ~1,800         | 500                  |
 | Test        | 11,490         | ~1,500         | 500                  |
 
-### 🛠 Preprocessing
+###  Preprocessing
 - Text normalization (whitespace, punctuation, unicode fixes)
 - Monetary value standardization (e.g., $1.5B → 1.5 billion USD)
 - Removal of noise and special characters
 
-### 📈 Exploratory Data Analysis (EDA)
+###  Exploratory Data Analysis (EDA)
 - **Average Article Length**: 591.62 words
 - **Average Summary Length**: ~56 words
 - **Numerical Data**: ~13.69 numbers per document
 - **Entity Density**: 2.02 financial entities per 100 words
 - **Compression Ratio**: ~0.072 (7%)
 
-### 📄 Dataset Report
+###  Dataset Report
 - Summary of article and summary length distributions
 - Entity type distributions: percentage, dollar amounts, fiscal quarters, growth rates
 - Entity recognition limitations due to basic regex patterns
 
 ---
 
-## ⚙️ Phase 2: Model Selection & Fine-Tuning Setup — *Completed*
+##  Phase 2: Model Selection & Fine-Tuning Setup — *Completed*
 
-### 🤔 Model Comparison
+###  Model Comparison
 | Model     | Parameters | Pretraining Domain        | Pros                               |
 |-----------|------------|----------------------------|------------------------------------|
 | BART      | 406M       | General                    | Lightweight, strong baseline       |
@@ -53,7 +53,7 @@ This project presents a **Parameter-Efficient Fine-Tuning (PEFT)** approach usin
 - **Selected Model**: `google/pegasus-cnn_dailymail`
 - **Reason**: Best performance-to-resource balance for summarization on T4 GPU
 
-### 🧠 LoRA Configuration
+### LoRA Configuration
 ```python
 peft_config = LoraConfig(
     task_type=TaskType.SEQ_2_SEQ_LM,
@@ -67,19 +67,19 @@ peft_config = LoraConfig(
 - **Trainable Parameters**: ~2.4M (~0.42% of 568M total)
 - **Hardware Used**: Google Colab T4 (16 GB VRAM)
 
-### 🧪 Tokenization and Dataset Formatting
+###  Tokenization and Dataset Formatting
 - Article token limit: 512 tokens
 - Summary target length: 128 tokens
 - Label padding tokens set to -100 (ignored in loss calculation)
 
-### ⚖️ Evaluation Metrics
+###  Evaluation Metrics
 - **ROUGE-1**: Unigram overlap
 - **ROUGE-2**: Bigram overlap
 - **ROUGE-L**: Longest common subsequence
 - **METEOR**: Synonym-aware semantic similarity
 - **BERTScore (F1)**: Embedding-based semantic similarity
 
-### ⚙️ Training Setup
+### Training Setup
 ```python
 training_args = Seq2SeqTrainingArguments(
     output_dir="results_pegasus_lora",
@@ -97,14 +97,14 @@ training_args = Seq2SeqTrainingArguments(
 )
 ```
 
-### 🐞 Error Handling & Fixes
+###  Error Handling & Fixes
 - Refined regex for financial_year, growth rates, and monetary values
 - Addressed tokenizer warnings (deprecated class handling)
 - Resolved `PeftModelForSeq2SeqLM` label warnings (non-blocking)
 
 ---
 
-## 🔄 Workflow Diagram
+##  Workflow Diagram
 ```mermaid
 graph TD
     A[Load CNN/DailyMail Dataset] --> B[Filter Financial Content (436 Keywords)]
@@ -119,7 +119,7 @@ graph TD
 
 ---
 
-## 📊 Results: Initial Fine-Tuning (Proof of Concept)
+##  Results: Initial Fine-Tuning (Proof of Concept)
 
 | Metric        | Baseline (PEGASUS) | Fine-Tuned (LoRA r=8) |
 |---------------|---------------------|-------------------------|
@@ -134,7 +134,7 @@ graph TD
 
 ---
 
-## 🔬 Phase 3 Plan: Hyperparameter Optimization
+##  Phase 3 Plan: Hyperparameter Optimization
 
 ### 🔁 Hyperparameter Grid
 | Parameter       | Values                     |
@@ -143,21 +143,21 @@ graph TD
 | Batch Size       | `2`, `4`                   |
 | LoRA Rank        | `8`, `16`                  |
 
-### 🧪 Planned Enhancements
+###  Planned Enhancements
 - Add **financial NER-based recall** in evaluation
 - Implement **early stopping** and **gradient checkpointing**
 - Integrate **Optuna** for automated HPO
 
 ---
 
-## 🧠 Key Learnings & Considerations
+##  Key Learnings & Considerations
 - LoRA provides high gains with just 0.42% of parameters updated
 - PEGASUS shows strong baseline, but financial-specific training boosts accuracy
 - Entity-level summaries require semantic and numerical accuracy
 
 ---
 
-## 🚀 Future Work
+##  Future Work
 - Extend training to 40,000 full financial articles
 - Perform 10+ epochs for better convergence
 - Evaluate summaries using **human evaluation + QA-based metrics**
@@ -166,12 +166,10 @@ graph TD
 
 ---
 
-## 📜 License
+##  License
 MIT License — Free to use and modify with attribution.
 
-## 👥 Contributors
-Developed by INFO7375 Project Team — Spring 2025
 
-## 💻 Languages & Tools
+##  Languages & Tools
 - Python, Jupyter, Hugging Face, PEFT, Transformers, Google Colab, Matplotlib, Seaborn
 
