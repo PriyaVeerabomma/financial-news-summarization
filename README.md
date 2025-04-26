@@ -155,7 +155,7 @@ training_args = Seq2SeqTrainingArguments(
 ## Workflow Diagram
 ```mermaid
 graph TD
-    A[Load CNN/DailyMail Dataset] --> B[Filter Financial Content (436 Keywords)]
+    A[Load CNN/DailyMail Dataset] --> B[Filter Financial Content \n436 Keywords]
     B --> C[Clean & Normalize Text]
     C --> D[EDA: Length, Entities, Compression]
     D --> E[Compare Models: BART, T5, PEGASUS]
